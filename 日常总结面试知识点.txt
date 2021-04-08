@@ -1,0 +1,24 @@
+如何保证数据库和redis的一致性
+更新时候先删缓存、再更新数据库；查询的时候，若没有缓存，就去查数据库，再把结果缓存到redis。另外高并发
+场景下，可能导致更新出现线程安全的问题，可以把更新业务放到kafka里边，用服务去消费它。
+除此之外，也可以使用阿里开源canal来保证数据同步，它底层实现使基于mysql的binlog去实现的。
+
+注册中心eureka和zookeeper的区别
+eureka保证服务可用性、zookeeper保证一致性。zookeeper根据半数存活原则在存活服务低于一半时，注册服务就不能用了，
+另外选举新的leader期间，zookeeper也不能工作。eureka只要有一个服务存活，服务就可以用。
+
+线程池的状态
+running、showdown、stop、tidying、termenated
+
+线程池的运行线程数存放在哪里
+原子类autoInteger的一个ctl变量，高三位存储状态，低29位存储线程个数
+
+kafka吞吐量为什么高
+零拷贝：消息直接从磁盘到消费端
+消息分区存储：每个partition下有多个segment，每个segment下有index文件和log文件
+消息的批量压缩：节约带宽
+
+Elasticsearch
+分布式文件搜索引擎，支持海量数据的搜索。倒排索引：传统意义的搜索都是通过key去找value，倒排是通过value找key，在
+es里边，把value叫做term，存在一个term dictionary的东西，利用二分查找，加快查找效率。term index：在数据量比较大的时候，
+使用可能term也比较多，为了查找方便，把term的前缀拿出来搞一个树型结构存起来，放到内存里边，加快查找效率。
