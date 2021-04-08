@@ -1,0 +1,192 @@
+JDK动态代理和CGLIB动态代理的区别
+
+JDK动态代理无法代理一个没有接口的类，JDK动态代理是利用反射机制生成一个实现代理接口的匿名类；
+
+而CGLIB是针对类实现代理，主要是对指定的类生成一个子类，并且覆盖其中的方法。另外的话就是cglib底层的实现依赖于利用ASM框架修改代理类字节码文件。
+
+ 
+
+AOP的四种通知类型
+
+1.前置通知
+
+2.后置通知
+
+3.异常通知 
+
+4.最终通知 切入点执行完毕之后调用的方法，无论是否发生了异常都会调用
+
+5.环绕通知 通过ProceedingJoinPoint在方法执行前后加上自定义的逻辑
+
+ 
+
+spring的自动代理
+
+在传统的基于代理类的AOP实现中，每个代理都是通过ProxyFactoryBean织入切面代理，在实际开发中，非常多的Bean每个都配置ProxyFactoryBean开发维护量巨大。
+
+解决方案：自动创建代理
+
+BeanNameAutoProxyCreator 根据Bean名称创建代理
+
+DefaultAdvisorAutoProxyCreator 根据Advisor本身包含信息创建代理
+
+AnnotationAwareAspectJAutoProxyCreator 基于Bean中的AspectJ注解进行自动代理
+
+ 
+
+spring的AOP
+
+AOP是面向切面编程，是面向对象编程OOP的补充，因为使用OOP无法对很多对象的公共行为做统一处理，就比较适合AOP，将公共行为抽象为一个切面，可以提高代码的复用性。
+
+另外AOP的实现主要依赖于动态代理，通过代理对象对方法的执行前后做修饰。动态代理的实现由两种方式，分别为JDK动态代理和CGLIB动态代理，两种动态代理都依赖于InvocationHandler.invoke()方法，在这个方法的执行过程中，会获取代理方法的拦截器链，并执行，也就是我们配置的各种通知，通过这样，就织入了我们写的公共业务处理逻辑。
+
+ 
+
+IOC和DI
+
+控制反转是由spring来负责控制对象的生命周期和对象间的关系。依赖注入是在系统运行中，动态的向某个对象提供它所需要的其他对象。其中IOC容器生成对象是通过全类名使用反射生成对象的。
+
+ 
+
+BeanFactory和ApplicationContext
+
+BeanFactory是IOC容器中最顶级的接口，里面主要涉及从IOC容器获取bean的相关方法。ApplicationContext可认为是高级的IOC容器，里边集成了国际化、消息接收、响应机制等内容
+
+ 
+
+ioc初始化流程
+
+1.项目启动时，会首先确定要使用的IOC容器是哪个，例如XmlWebApplicationContext还是springboot的AnnotationConfigApplicationContext，但是这两个容器都继承自
+
+AbstractApplicationContext，核心逻辑也在里边展开；
+
+2.然后会定义一个beanFactory，默认为 DefaultListableBeanFactory，加载项目里边涉及到的beanDefinition到beanFactory的一个map里边；
+
+3.然后会实例化和调用BeanFactoryPostProcessor，即bean工厂的后置处理器，在这个阶段，IOC容器允许我们在实例化bean之前读取beanDefinition，并修改它；
+
+4.加载项目中定义的BeanPostProcessor（bean后置处理器）到beanFactory中，IoC 容器允许BeanPostProcessor在容器初始化 bean 的前后，添加自己的逻辑处理；
+
+5.实例化所有剩余的非懒加载单例 bean，在这个过程中会触发我们bean后置处理器里边添加的逻辑；
+
+6.完成ApplicationContext的刷新。
+
+ 
+
+springmvc的流程
+
+1.发请求到dispatchServlet前端控制器；
+
+2.前端控制器通过handlerMapping查找该哪个handler去处理这个请求,以及是否还需要别的handler去处理、是否涉及到拦截器的逻辑等；
+
+3.找到之后，把任务交给处理器适配器HandlerAdapter去具体执行，然后完成之后，返回ModelAndView给dispatchServlet；
+
+4.dispatchServlet把ModelAndView通过视图解析器解析成具体的视图，然后交给前端控制器进行视图渲染，返回请求。
+
+ 
+
+spring中bean的生命周期
+
+1.spring在实例化bean之后，开始bean的初始化；
+2.会通过beanNameAware、BeanFactoryAware、ApplicationContextAware接口将beanName、BeanFactory、ApplicationContext传递到bean里边；
+3.接着会执行bean后置处理器中实现的初始化之前调用的方法；
+4.如果bean中有方法实现了PostConstruct注解，那该方法将会被调用；
+5.紧接着调用初始化的方法，有两种，一个是通过InitializingBean接口的afterPropertiesSet()方法、一种是通过xml中的inint-method标签配置的；
+6.接着执行bean后置处理器中实现的初始化之后的方法；
+7.当应用停止，bean将会被销毁；
+8.如果bean中有方法添加了@PreDestroy注解，那么该方法将被调用；
+9.若bean实现了DisposableBean接口，spring将调用它的distroy()接口方法。
+
+ 
+
+bean的作用域
+prototype、singleton、request、session、global session（portlet容器中的session）
+
+ 
+
+Spring注解autowired 和resource区别
+autowired是根据类型去注入bean，qulifire是根据名称去注入bean；resource注解有name和type两个属性，可以使用名称和类型去注入bean，默认使用
+另外autowired是spring的注解，resource是j2ee的注解。
+
+ 
+
+getBean方法：
+1.根据传入的beanName获取对应的beanDefinition以及获取当前bean父类的beanDefinition，进行合并，获取完整的bean定义;
+2.利用构造器或工厂方法实例化bean，并对需要依赖注入的bean通过递归getbean的方法获取；
+3.调用bean的初始化的方法，获取最终的bean，如果实现了factoryBean的接口，通过getObject方法返回bean实例；
+4.通过TypeConverter类型转换，转成需要的类型。
+
+ 
+
+spring的自动装配方式
+1.no —— 默认方式，自动装配方式为手动装配，即配置文件中通过ref手动设定；
+2.byName —— 根据属性名称自动装配，如果一个bean的名称和其他bean属性一致，则进行自动装配；
+3.byType——按照数据类型进行自动装配，如果一个bean的名称和其他bean的属性的数据类型一致，则进行兼容并自动装配；
+4.constructor ——通过构造函数参数的byType方式；
+5.autodetect —— 如果找到默认的构造函数，使用“自动装配用构造”; 否则，使用“按类型自动装配”。（已经遗弃了）。
+
+DI依赖注入的方式
+
+1.构造方法注入
+
+2.setter注入（属性）
+
+3.注解注入（接口）
+
+ 
+
+简述一下织入
+--代理织入分为动态织入和静态织入。动态织入指程序运行过程中通过JDK代理或cglib的方式动态生成代理类字节码。静态织入是指在编译时、后编译时（编译jar包）或类加载时修改字节码，以达到嵌入切面代码，生成代理类的目的。静态织入的手段一般是使用特殊编译器或特殊的类加载器。具体到操作上可以替换jvm的启动参数，然后配合xml文件以达到使用自定义的编译方式或者类加载器的目的。
+注意，动态织入和静态织入不同于静态代理和动态代理。静态代理特指手动实现代理类。动态代理特指java API的动态代理方法。主要区别在于编译期过后，是否生成了代理类的字节码。
+AspectJ是静态织入，而SpringAOP虽然使用了AspectJ的注解，但却是动态织入。
+
+ 
+
+拦截器和AOP的关系 Spring拦截器的底层是怎么实现的
+
+在Spring AOP通过JDK的Proxy方式或CGLIB方式生成代理对象的时候，相关的拦截器已经配置到代理对象中去了，拦截器在代理对象中起作用是通过对这些方法的回调来完成的。如果使用JDK的Proxy来生成代理对象，那么需要通过InvocationHandler来设置拦截器回调.而如果使用CGLIB来生成代理对象，就需要根据CGLIB的使用要求.通过DynamicAdvisedlnterceptor来完成回调。
+
+ 
+
+事务的四个特性ACID
+原子性：一条操作要么成功，要么失败
+一致性：转账的场景，A给B转钱，A的账户少了钱，B的账户一定要多了转过来的钱
+隔离性：多个线程之间的操作相互隔离
+持久性：一条数据库操作持久化到磁盘上面来
+
+ 
+
+Spring 默认的事务传播行为
+PROPAGATION_REQUIRED：如果存在一个事务，则支持当前事务。如果没有事务则开启一个新的事务；
+PROPAGATION_SUPPORTS：如果存在一个事务，则支持当前事务。如果没有事务，则非事务的执行；
+PROPAGATION_NOT_SUPPORTED：总是非事务地执行，并挂起任何存在的事务；
+PROPAGATION_MANDATORY：如果已经存在一个事务，支持当前事务。如果没有一个活动的事务，则抛出异常；
+PROPAGATION_REQUIRES_NEW：它会开启一个新的事务。如果一个事务已经存在，则先将这个存在的事务挂起；
+PROPAGATION_NEVER：总是非事务地执行，如果存在一个活动事务，则抛出异常；
+PROPAGATION_NESTED：如果一个活动的事务存在，则运行在一个嵌套的事务中。 如果没有活动事务, 则按TransactionDefinition.PROPAGATION_REQUIRED 属性执行。
+
+ 
+
+数据库的事务隔离级别
+
+读未提交、读已提交（sqlserver、oracle默认隔离级别）、可重复读（mysql默认隔离级别）、序列化
+
+ 
+
+为什么我的事务不生效
+1.如果不是Innodb存储引擎，MyISAM不支持事务。
+2.没有指定rollbackFor参数。
+3. 没有指定transactionManager参数，默认的transactionManager并不是我期望的，以及一个事务中涉及到了多个数据库。
+4. 如果AOP使用了JDK动态代理，对象内部方法互相调用不会被Spring的AOP拦截，@Transactional注解无效。
+5. 如果AOP使用了CGLIB代理，事务方法或者类不是public，无法被外部包访问到，或者是final无法继承，@transactional注解无效。
+
+ 
+
+JVM内存结构的划分
+https://blog.csdn.net/qzqanzc/article/details/81008598
+
+jps：查看所有的jvm进程，包括进程ID，进程启动的路径等等；
+jmap：监视进程运行中的jvm物理内存的占用情况，该进程内存内，所有对象的情况，例如产生了哪些对象，对象数量；
+jinfo：观察进程运行环境参数，包括Java System属性和JVM命令行参数。
+
+JVM内存分配
+https://blog.csdn.net/a772304419/article/details/104134403
