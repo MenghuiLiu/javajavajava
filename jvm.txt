@@ -26,3 +26,6 @@ minor gc如果运行的很频繁，可能是什么原因引起的，minor gc如�
 类加载过程 ? 初始化阶段是干什么的?
 双亲委派模型的好处是什么？
 
+面经
+https://blog.csdn.net/mabiao6822/article/details/102484726
+
