@@ -1,3 +1,32 @@
+个人面试总结
+
+1.concurrnethashmap、hashmap、
+2.IO底层实现、怎么不OOM
+3.微服务框架、rpc
+4.快排的实现
+5.分布式、事务
+6.多线程锁、lock的底层实现原理
+7.算法
+8.项目
+
+笔试
+
+三面：leader面
+
+平安寿险
+如何保证数据库和redis的一致性
+注册中心eureka和zookeeper的区别
+数据库sql优化点
+spring aop的原理
+缓存穿透、缓存雪崩原因和解决办法	
+如何定位生产JVM问题
+hadoop的基本原理
+项目上碰到的最难的问题
+静态类修饰的类和非静态修饰类的区别
+
+IO、集合、多线程、事务、锁、分布式、redis
+
+网上收集
 https://blog.csdn.net/mabiao6822/article/details/102484726
 
 https://ac.nowcoder.com/discuss/268072?type=2
