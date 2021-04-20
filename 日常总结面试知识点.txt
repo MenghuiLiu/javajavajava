@@ -22,3 +22,10 @@ Elasticsearch
 分布式文件搜索引擎，支持海量数据的搜索。倒排索引：传统意义的搜索都是通过key去找value，倒排是通过value找key，在
 es里边，把value叫做term，存在一个term dictionary的东西，利用二分查找，加快查找效率。term index：在数据量比较大的时候，
 使用可能term也比较多，为了查找方便，把term的前缀拿出来搞一个树型结构存起来，放到内存里边，加快查找效率。
+
+arraylist的remove方法
+remove(int)方法 是删除数组下标为i的元素
+remove(object)方法 是删除数组中值为object的元素
+remove之后，数组长度减一
+对arraylist一边遍历，一边remove，会报java.util.ConcurrentModificationException的错误，使用迭代器遍历删除
+Arrays.asList返回的ArrayList是Arrays类中的一个内部类，并不是java.util.ArrayList，没有实现add等方法
