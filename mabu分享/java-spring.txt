@@ -162,7 +162,8 @@ PROPAGATION_NOT_SUPPORTED：总是非事务地执行，并挂起任何存在的�
 PROPAGATION_MANDATORY：如果已经存在一个事务，支持当前事务。如果没有一个活动的事务，则抛出异常；
 PROPAGATION_REQUIRES_NEW：它会开启一个新的事务。如果一个事务已经存在，则先将这个存在的事务挂起；
 PROPAGATION_NEVER：总是非事务地执行，如果存在一个活动事务，则抛出异常；
-PROPAGATION_NESTED：如果一个活动的事务存在，则运行在一个嵌套的事务中。 如果没有活动事务, 则按TransactionDefinition.PROPAGATION_REQUIRED 属性执行。
+PROPAGATION_NESTED：如果一个活动的事务存在，则运行在一个嵌套的事务中。如果没有活动事务,则按
+TransactionDefinition.PROPAGATION_REQUIRED属性执行。
 
  
 
@@ -175,9 +176,9 @@ PROPAGATION_NESTED：如果一个活动的事务存在，则运行在一个嵌�
 为什么我的事务不生效
 1.如果不是Innodb存储引擎，MyISAM不支持事务。
 2.没有指定rollbackFor参数。
-3. 没有指定transactionManager参数，默认的transactionManager并不是我期望的，以及一个事务中涉及到了多个数据库。
-4. 如果AOP使用了JDK动态代理，对象内部方法互相调用不会被Spring的AOP拦截，@Transactional注解无效。
-5. 如果AOP使用了CGLIB代理，事务方法或者类不是public，无法被外部包访问到，或者是final无法继承，@transactional注解无效。
+3.没有指定transactionManager参数，默认的transactionManager并不是我期望的，以及一个事务中涉及到了多个数据库。
+4.如果AOP使用了JDK动态代理，对象内部方法互相调用不会被Spring的AOP拦截，@Transactional注解无效。
+5.如果AOP使用了CGLIB代理，事务方法或者类不是public，无法被外部包访问到，或者是final无法继承，@transactional注解无效。
 
  
 
